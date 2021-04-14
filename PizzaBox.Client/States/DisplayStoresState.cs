@@ -24,9 +24,6 @@ namespace PizzaBox.Client.States
                     return;
                 }
             }
-
-
-
             List<Domain.Abstracts.AStore> validStores = new List<Domain.Abstracts.AStore>();
             var orderHistory = PizzaBox.Client.Singletons.OrderSingleton.Instance.Orders
                                 .Where(order => order.Customer.Name.Equals(context.Customer.Name))
@@ -40,9 +37,9 @@ namespace PizzaBox.Client.States
                 if (lastOrderFromStore is not null)
                 {
                     // the current customer HAS at least 1 order from the current store
-                    // check difference of time placed is less than 2 hours
+                    // check if it has been more than 24 hours since the last order was placed
                     var timeDifference = System.DateTime.Now - lastOrderFromStore.TimePlaced;
-                    if (timeDifference.TotalHours < 2)
+                    if (timeDifference.TotalSeconds > 60 *  60 * 24)
                     {
                         validStores.Add(store);
                     }
@@ -80,10 +77,7 @@ namespace PizzaBox.Client.States
             context.Store = validStores[input - 1];
             context.Order.Store = context.Store;
 
-            //context.State = PizzaBox.Client.Singletons.StateSingleton.Instance.GetState<SelectStoreState>();
             context.State = StateSingleton.Instance.GetState<EditOrderState>();
-
-
         }
     }
 }
