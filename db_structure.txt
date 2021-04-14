@@ -1,0 +1,5 @@
+TODOS:
+	-limit Orders based on time
+		-once per store per day
+
+	-List store revenue by week or month
