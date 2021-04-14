@@ -14,7 +14,7 @@ namespace PizzaBox.Client.States
         private void SelectSize(Context context)
         {
             var index = 0;
-            SizeSingleton.Instance.Sizes.ForEach(size => 
+            SizeSingleton.Instance.Sizes.ForEach(size =>
                 Console.WriteLine($"{++index} - {size} - {size.Price}"));
             var input = 0;
             do
@@ -35,7 +35,7 @@ namespace PizzaBox.Client.States
         private void SelectCrust(Context context)
         {
             var index = 0;
-            CrustSingleton.Instance.Crusts.ForEach(crust => 
+            CrustSingleton.Instance.Crusts.ForEach(crust =>
                 Console.WriteLine($"{++index} - {crust} - {crust.Price}"));
             var input = 0;
             do
@@ -56,9 +56,10 @@ namespace PizzaBox.Client.States
         private bool AddTopping(Context context)
         {
             var index = 0;
-            ToppingSingleton.Instance.Toppings.ForEach(topping => 
+            ToppingSingleton.Instance.Toppings.ForEach(topping =>
                 Console.WriteLine($"{++index} - {topping} - {topping.Price}"));
-            if (currentPizza.Toppings.Count >= 2)
+            bool displayDone = currentPizza.Toppings.Count >= 2;
+            if (displayDone)
             {
                 Console.WriteLine($"{++index} - Done");
             }
@@ -73,19 +74,18 @@ namespace PizzaBox.Client.States
                 {
 
                 }
-                if (input == index)
-                {
-                    return false;
-                }
             } while (input <= 0 || input > index);
-
+            if (displayDone && input == index)
+            {
+                return false;
+            }
             currentPizza.Toppings.Add(ToppingSingleton.Instance.Toppings[input - 1]);
             return true;
         }
 
         private void AddToppings(Context context)
         {
-            while (currentPizza.Toppings.Count < 5 && AddTopping(context)) {}
+            while (currentPizza.Toppings.Count < 5 && AddTopping(context)) { }
         }
 
 
