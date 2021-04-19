@@ -1,5 +1,6 @@
 using System;
 using PizzaBox.Domain.Models;
+using System.Linq;
 
 namespace PizzaBox.Storing.Mappers
 {
@@ -25,12 +26,12 @@ namespace PizzaBox.Storing.Mappers
                     throw new ArgumentException("CrustMapper ran into an unknown Crust Type when mapping from DB Model to Domain Model");
             }
             crust.Price = model.Price;
+            crust.ID = model.ID;
             return crust;
         }
 
-        public Entities.Crust Map(Domain.Models.Crust model)
+        public Entities.Crust Map(Domain.Models.Crust model, Entities.AnimalsDbContext context)
         {
-            Entities.Crust crust = new Entities.Crust();
             Entities.CRUST_TYPE crustType;
             switch (model)
             {
@@ -47,6 +48,13 @@ namespace PizzaBox.Storing.Mappers
                     throw new ArgumentException("CrustMapper ran into an unknown type of crust when mapping from Domain Model to DB Model");
             }
 
+            var dbCrust = context.Crusts.FirstOrDefault(c => c.CrustType == crustType);
+            if (dbCrust is not null)
+            {
+                return dbCrust;
+            }
+
+            Entities.Crust crust = new Entities.Crust();
             crust.CrustType = crustType;
             crust.Price = model.Price;
             return crust;

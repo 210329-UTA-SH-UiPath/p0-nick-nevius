@@ -7,7 +7,7 @@ namespace PizzaBox.Storing.Entities
     {
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseSqlServer("Server=tcp:pizzaboxapp-nick.database.windows.net,1433;Initial Catalog=PizzaBoxDB-Nick;User ID=dev;Password=Camarillo95");
+            options.UseSqlServer("Server=tcp:pizzaboxapp-nick.database.windows.net,1433;Initial Catalog=PizzaBoxDB-Nick;User ID=dev;Password=<password>");
         }
 
         public DbSet<Crust> Crusts { get; set; }
@@ -20,12 +20,16 @@ namespace PizzaBox.Storing.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<Topping>(topping => topping.HasIndex(t => t.ToppingType).IsUnique());
-            //modelBuilder.Entity<Crust>(crust => crust.HasIndex(c => c.CrustType).IsUnique());
-            //modelBuilder.Entity<Store>(store => store.HasIndex(s => s.Name).IsUnique());
-            //modelBuilder.Entity<Size>(size => size.HasIndex(s => s.SizeType).IsUnique());
-            //modelBuilder.Entity<Customer>(customer => customer.HasIndex(c => c.Name).IsUnique());
+            modelBuilder.Entity<Topping>().HasIndex(t => t.ToppingType).IsUnique();
+            modelBuilder.Entity<Crust>().HasIndex(c => c.CrustType).IsUnique();
+            modelBuilder.Entity<Size>().HasIndex(s => s.SizeType).IsUnique();
+            modelBuilder.Entity<Store>().HasIndex(s => s.Name).IsUnique();
+            modelBuilder.Entity<Customer>().HasIndex(c => c.Name).IsUnique();
 
+            modelBuilder.Entity<Topping>().HasMany(t => t.Pizzas).WithMany(p => p.Toppings);
+            modelBuilder.Entity<Order>().HasOne(o => o.Customer);
+            modelBuilder.Entity<Order>().HasOne(o => o.Store);
+            modelBuilder.Entity<Order>().HasMany(o => o.Pizzas).WithMany(p => p.Orders);
             base.OnModelCreating(modelBuilder);
         }
 

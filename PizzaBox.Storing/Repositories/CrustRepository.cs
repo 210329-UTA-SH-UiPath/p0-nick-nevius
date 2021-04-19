@@ -20,14 +20,14 @@ namespace PizzaBox.Storing.Repositories
 
         public void Add(Domain.Models.Crust t)
         {
-            context.Crusts.Add(mapper.Map(t));
+            context.Crusts.Add(mapper.Map(t, context));
             context.SaveChanges();
         }
 
         public List<Domain.Models.Crust> GetList()
         {
 
-            return context.Crusts.AsEnumerable().GroupBy(c => c.CrustType).Select(c => c.First()).Select(mapper.Map).ToList();
+            return context.Crusts.Select(mapper.Map).ToList();
 
             //List<Domain.Models.Crust> crusts = new List<Domain.Models.Crust>();
             //context.Crusts.AsEnumerable().GroupBy(c => c.CrustType).Select(c => c.First()).ToList().ForEach(crust => crusts.Add(mapper.Map(crust)));
@@ -36,7 +36,7 @@ namespace PizzaBox.Storing.Repositories
 
         public void Remove(Domain.Models.Crust t)
         {
-            Entities.Crust dbCrust = mapper.Map(t);
+            Entities.Crust dbCrust = mapper.Map(t, context);
             Entities.Crust crust = context.Crusts.ToList().Find(c => c.CrustType == dbCrust.CrustType);
             if (crust is not null)
             {
@@ -47,11 +47,11 @@ namespace PizzaBox.Storing.Repositories
 
         public void Update(Domain.Models.Crust existing, Domain.Models.Crust updated)
         {
-            Entities.Crust dbCrust = mapper.Map(existing);
+            Entities.Crust dbCrust = mapper.Map(existing, context);
             Entities.Crust crust = context.Crusts.ToList().Find(c => c.CrustType == dbCrust.CrustType);
             if (crust is not null)
             {
-                Entities.Crust updatedMapped = mapper.Map(updated);
+                Entities.Crust updatedMapped = mapper.Map(updated, context);
                 crust.CrustType = updatedMapped.CrustType;
                 crust.Price = updatedMapped.Price;
                 context.SaveChanges();

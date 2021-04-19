@@ -12,6 +12,12 @@ namespace PizzaBox.Storing.Entities
 
     public class Pizza
     {
+        public Pizza()
+        {
+            Toppings = new List<Topping>();
+            Orders = new List<Order>();
+        }
+
         [Key]
         public int ID { get; set; }
         [Required]
@@ -24,5 +30,7 @@ namespace PizzaBox.Storing.Entities
         public List<Topping> Toppings { get; set; }
         [Required]
         public decimal Price { get; set; }
+        [Required]
+        public ICollection<Order> Orders { get; set; }
     }
 }

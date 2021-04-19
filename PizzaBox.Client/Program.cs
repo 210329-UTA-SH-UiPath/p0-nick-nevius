@@ -17,6 +17,9 @@ namespace PizzaBox.Client
     /// </summary>
     internal class Program
     {
+        private static readonly CrustSingleton _crustSingleton = CrustSingleton.Instance;
+        private static readonly SizeSingleton _sizeSingleton = SizeSingleton.Instance;
+        private static ToppingSingleton _toppingSingleton = ToppingSingleton.Instance;
         private static readonly StoreSingleton _storeSingleton = StoreSingleton.Instance;
         private static readonly PizzaSingleton _pizzaSingleton = PizzaSingleton.Instance;
         private static readonly StateSingleton _stateSingleton = StateSingleton.Instance;
@@ -40,36 +43,33 @@ namespace PizzaBox.Client
             OrderRepository orderRepository = new OrderRepository(DbContextSingleton.Instance.Context);
             Customer cust = new Customer("Nick");
 
-            AStore store = new NewYorkStore();
-            store.Name = "Test New York Store";
+            //AStore store = new ChicagoStore();
+            //store.Name = "Test Chicago Store 2";
+            AStore store = _storeSingleton.Stores[0];
 
             Order order = new Order();
             order.Store = store;
             order.Customer = cust;
 
-            APizza pizza = new CustomPizza();
-            pizza.Crust = new DeepDishCrust();
-            pizza.Size = new SmallSize();
-            pizza.Toppings = new List<Topping>();
-            pizza.Toppings.Add(new BaconTopping());
-            pizza.Toppings.Add(new PepperoniTopping());
+            APizza pizza1 = new MeatPizza();
+            APizza pizza2 = new VeganPizza();
 
             order.Pizzas = new List<APizza>()
             {
-              pizza,
-              new VeganPizza(),
-              new MeatPizza()
+              pizza1,
+              pizza2
             };
 
             orderRepository.Add(order);
 
+/*
             pizza.Size = new LargeSize();
             pizza.Toppings = new List<Topping>();
             pizza.Toppings.Add(new BaconTopping());
             pizza.Toppings.Add(new OnionTopping());
             order.Store.Name = "Test Store 2";
             orderRepository.Add(order);
-
+*/
 
             /*
       public Store Store { get; set; }

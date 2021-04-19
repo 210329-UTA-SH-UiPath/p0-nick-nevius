@@ -19,6 +19,21 @@ namespace PizzaBox.Storing.Migrations
                 .HasAnnotation("ProductVersion", "5.0.5")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("OrderPizza", b =>
+                {
+                    b.Property<int>("OrdersID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PizzasID")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrdersID", "PizzasID");
+
+                    b.HasIndex("PizzasID");
+
+                    b.ToTable("OrderPizza");
+                });
+
             modelBuilder.Entity("PizzaBox.Storing.Entities.Crust", b =>
                 {
                     b.Property<int>("ID")
@@ -34,6 +49,9 @@ namespace PizzaBox.Storing.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("CrustType")
+                        .IsUnique();
+
                     b.ToTable("Crusts");
                 });
 
@@ -46,9 +64,12 @@ namespace PizzaBox.Storing.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Customers");
                 });
@@ -91,9 +112,6 @@ namespace PizzaBox.Storing.Migrations
                     b.Property<int?>("CrustID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OrderID")
-                        .HasColumnType("int");
-
                     b.Property<int>("PizzaType")
                         .HasColumnType("int");
 
@@ -106,8 +124,6 @@ namespace PizzaBox.Storing.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("CrustID");
-
-                    b.HasIndex("OrderID");
 
                     b.HasIndex("SizeID");
 
@@ -129,6 +145,9 @@ namespace PizzaBox.Storing.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("SizeType")
+                        .IsUnique();
+
                     b.ToTable("Sizes");
                 });
 
@@ -141,12 +160,15 @@ namespace PizzaBox.Storing.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("StoreType")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Stores");
                 });
@@ -158,9 +180,6 @@ namespace PizzaBox.Storing.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("PizzaID")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -169,9 +188,40 @@ namespace PizzaBox.Storing.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("PizzaID");
+                    b.HasIndex("ToppingType")
+                        .IsUnique();
 
                     b.ToTable("Toppings");
+                });
+
+            modelBuilder.Entity("PizzaTopping", b =>
+                {
+                    b.Property<int>("PizzasID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ToppingsID")
+                        .HasColumnType("int");
+
+                    b.HasKey("PizzasID", "ToppingsID");
+
+                    b.HasIndex("ToppingsID");
+
+                    b.ToTable("PizzaTopping");
+                });
+
+            modelBuilder.Entity("OrderPizza", b =>
+                {
+                    b.HasOne("PizzaBox.Storing.Entities.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PizzaBox.Storing.Entities.Pizza", null)
+                        .WithMany()
+                        .HasForeignKey("PizzasID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PizzaBox.Storing.Entities.Order", b =>
@@ -195,10 +245,6 @@ namespace PizzaBox.Storing.Migrations
                         .WithMany()
                         .HasForeignKey("CrustID");
 
-                    b.HasOne("PizzaBox.Storing.Entities.Order", null)
-                        .WithMany("Pizzas")
-                        .HasForeignKey("OrderID");
-
                     b.HasOne("PizzaBox.Storing.Entities.Size", "Size")
                         .WithMany()
                         .HasForeignKey("SizeID");
@@ -208,21 +254,19 @@ namespace PizzaBox.Storing.Migrations
                     b.Navigation("Size");
                 });
 
-            modelBuilder.Entity("PizzaBox.Storing.Entities.Topping", b =>
+            modelBuilder.Entity("PizzaTopping", b =>
                 {
                     b.HasOne("PizzaBox.Storing.Entities.Pizza", null)
-                        .WithMany("Toppings")
-                        .HasForeignKey("PizzaID");
-                });
+                        .WithMany()
+                        .HasForeignKey("PizzasID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("PizzaBox.Storing.Entities.Order", b =>
-                {
-                    b.Navigation("Pizzas");
-                });
-
-            modelBuilder.Entity("PizzaBox.Storing.Entities.Pizza", b =>
-                {
-                    b.Navigation("Toppings");
+                    b.HasOne("PizzaBox.Storing.Entities.Topping", null)
+                        .WithMany()
+                        .HasForeignKey("ToppingsID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

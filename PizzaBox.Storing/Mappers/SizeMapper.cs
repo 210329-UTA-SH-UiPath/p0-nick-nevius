@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace PizzaBox.Storing.Mappers
 {
@@ -22,11 +23,13 @@ namespace PizzaBox.Storing.Mappers
                     throw new ArgumentException("SizeMapper encountered an unknown type when mapping from DB Model to Domain Model");
             }
             size.Price = model.Price;
+            size.ID = model.ID;
             return size;
         }
 
-        public Entities.Size Map(Domain.Models.Size model)
+        public Entities.Size Map(Domain.Models.Size model, Entities.AnimalsDbContext context)
         {
+
             Entities.SIZE_TYPE sizeType;
             switch (model)
             {
@@ -42,6 +45,12 @@ namespace PizzaBox.Storing.Mappers
                 default:
                     throw new ArgumentException("SizeMapper encountered an unknown type when mapping from Domain Model to DB Model");
             }
+            var dbSize = context.Sizes.FirstOrDefault(s => s.SizeType == sizeType);
+            if (dbSize is not null)
+            {
+                return dbSize;
+            }
+
             Entities.Size size = new Entities.Size();
             size.SizeType = sizeType;
             size.Price = model.Price;

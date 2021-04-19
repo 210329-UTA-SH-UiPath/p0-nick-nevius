@@ -2,6 +2,7 @@ using PizzaBox.Storing.Entities;
 using PizzaBox.Domain.Abstracts;
 using PizzaBox.Domain.Models;
 using System;
+using System.Linq;
 
 namespace PizzaBox.Storing.Mappers
 {
@@ -24,11 +25,21 @@ namespace PizzaBox.Storing.Mappers
                     throw new ArgumentException("Store mapper is attempting to map a store type that does not exist in the codebase");
             }
             aStore.Name = model.Name;
+            aStore.ID = model.ID;
             return aStore;
         }
 
-        public Store Map(AStore model)
+        public Store Map(AStore model, Entities.AnimalsDbContext context)
         {
+            if (model.ID != -1)
+            {
+                var dbStore = context.Stores.FirstOrDefault(s => s.ID == model.ID);
+                if (dbStore is not null)
+                {
+                    return dbStore;
+                }
+            }
+
             STORE_TYPE storeType;
             switch(model)
             {

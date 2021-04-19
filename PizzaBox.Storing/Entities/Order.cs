@@ -6,6 +6,11 @@ namespace PizzaBox.Storing.Entities
 {
     public class Order
     {
+        public Order()
+        {
+            Pizzas = new List<Pizza>();
+        }
+
         [Key]
         public int ID { get; set; }
         [Required]

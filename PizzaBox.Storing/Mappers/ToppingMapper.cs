@@ -1,4 +1,6 @@
 using System;
+using PizzaBox.Storing.Entities;
+using System.Linq;
 
 namespace PizzaBox.Storing.Mappers
 {
@@ -26,10 +28,11 @@ namespace PizzaBox.Storing.Mappers
             }
 
             topping.Price = model.Price;
+            topping.ID = model.ID;
             return topping;
         }
 
-        public Entities.Topping Map(Domain.Models.Topping model)
+        public Entities.Topping Map(Domain.Models.Topping model, Entities.AnimalsDbContext context)
         {
             Entities.TOPPING_TYPE toppingType;
             switch (model)
@@ -49,9 +52,17 @@ namespace PizzaBox.Storing.Mappers
                 default:
                     throw new ArgumentException("ToppingMapper encountered an unknown type when mapping from Domain Model to DB Model");
             }
+
+            var dbTopping = context.Toppings.FirstOrDefault(t => t.ToppingType == toppingType);
+            if (dbTopping is not null)
+            {
+                return dbTopping;
+            }
+
             Entities.Topping topping = new Entities.Topping();
             topping.ToppingType = toppingType;
             topping.Price = model.Price;
+
             return topping;
         }
     }

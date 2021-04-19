@@ -22,19 +22,26 @@ namespace PizzaBox.Storing.Mappers
             order.Price = model.TotalPrice;
             order.Store = storeMapper.Map(model.Store);
             order.TimePlaced = model.TimePlaced;
+
+            order.ID = model.ID;
             return order;
         }
 
-        public Entities.Order Map(Domain.Models.Order model)
+        public Entities.Order Map(Domain.Models.Order model, Entities.AnimalsDbContext context)
         {
             Entities.Order order = new Entities.Order();
 
-            order.Customer = customerMapper.Map(model.Customer);
-            List<Pizza> pizzas = new List<Pizza>();
-            model.Pizzas.ForEach(p => pizzas.Add(pizzaMapper.Map(p)));
-            order.Pizzas = pizzas;
+            order.Customer = customerMapper.Map(model.Customer, context);
+            foreach (Domain.Abstracts.APizza pizza in model.Pizzas)
+            {
+                var mappedPizza = pizzaMapper.Map(pizza, context);
+                mappedPizza.Orders.Add(order);
+                order.Pizzas.Add(mappedPizza);
+            }
 
-            order.Store = storeMapper.Map(model.Store);
+            //model.Pizzas.ForEach(p => pizzas.Add(pizzaMapper.Map(p, context)));
+
+            order.Store = storeMapper.Map(model.Store, context);
             order.TotalPrice = model.Price;
             order.TimePlaced = DateTime.Now;
             return order;

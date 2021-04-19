@@ -17,13 +17,13 @@ namespace PizzaBox.Storing.Repositories
 
         public void Add(Domain.Models.Topping t)
         {
-            context.Toppings.Add(mapper.Map(t));
+            context.Toppings.Add(mapper.Map(t, context));
             context.SaveChanges();
         }
 
         public List<Domain.Models.Topping> GetList()
         {
-            return context.Toppings.AsEnumerable().GroupBy(t => t.ToppingType).Select(t => t.First()).Select(mapper.Map).ToList();
+            return context.Toppings.Select(mapper.Map).ToList();
             //List<Domain.Models.Topping> toppings = new List<Domain.Models.Topping>();
             //context.Toppings.AsEnumerable().GroupBy(t => t.ToppingType).Select(t => t.First()).ToList().ForEach(topping => toppings.Add(mapper.Map(topping)));
             //return toppings;
@@ -31,7 +31,7 @@ namespace PizzaBox.Storing.Repositories
 
         public void Remove(Domain.Models.Topping t)
         {
-            Entities.Topping dbTopping = mapper.Map(t);
+            Entities.Topping dbTopping = mapper.Map(t, context);
             Entities.Topping topping = context.Toppings.ToList().Find(t => t.ToppingType == dbTopping.ToppingType);
             if (topping is not null)
             {
@@ -42,11 +42,11 @@ namespace PizzaBox.Storing.Repositories
 
         public void Update(Domain.Models.Topping existing, Domain.Models.Topping updated)
         {
-            Entities.Topping dbTopping = mapper.Map(existing);
+            Entities.Topping dbTopping = mapper.Map(existing, context);
             Entities.Topping topping = context.Toppings.ToList().Find(t => t.ToppingType == dbTopping.ToppingType);
             if (topping is not null)
             {
-                Entities.Topping updatedTopping = mapper.Map(updated);
+                Entities.Topping updatedTopping = mapper.Map(updated, context);
                 topping.ToppingType = updatedTopping.ToppingType;
                 topping.Price = updatedTopping.Price;
                 context.SaveChanges();

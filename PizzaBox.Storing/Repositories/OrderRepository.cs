@@ -19,7 +19,7 @@ namespace PizzaBox.Storing.Repositories
 
         public void Add(Domain.Models.Order t)
         {
-            context.Orders.Add(mapper.Map(t));
+            context.Orders.Add(mapper.Map(t, context));
             context.SaveChanges();
         }
 
@@ -32,7 +32,7 @@ namespace PizzaBox.Storing.Repositories
 
         public void Remove(Domain.Models.Order t)
         {
-            Entities.Order dbOrder = mapper.Map(t);
+            Entities.Order dbOrder = mapper.Map(t, context);
             Entities.Order order = context.Orders.ToList().Find(o => o.GetHashCode() == dbOrder.GetHashCode());
             if (order is not null)
             {
@@ -43,11 +43,11 @@ namespace PizzaBox.Storing.Repositories
 
         public void Update(Domain.Models.Order existing, Domain.Models.Order updated)
         {
-            Entities.Order dbOrder = mapper.Map(existing);
+            Entities.Order dbOrder = mapper.Map(existing, context);
             Entities.Order order = context.Orders.ToList().Find(o => o.GetHashCode() == dbOrder.GetHashCode());
             if (order is not null)
             {
-                Entities.Order updatedOrder = mapper.Map(updated);
+                Entities.Order updatedOrder = mapper.Map(updated, context);
                 order.Customer = updatedOrder.Customer;
                 order.Pizzas = updatedOrder.Pizzas;
                 order.Store = updatedOrder.Store;

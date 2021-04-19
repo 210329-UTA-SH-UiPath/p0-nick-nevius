@@ -18,13 +18,13 @@ namespace PizzaBox.Storing.Repositories
 
         public void Add(Domain.Models.Size t)
         {
-            context.Add(mapper.Map(t));
+            context.Add(mapper.Map(t, context));
             context.SaveChanges();
         }
 
         public List<Domain.Models.Size> GetList()
         {
-            return context.Sizes.AsEnumerable().GroupBy(s => s.SizeType).Select(s => s.First()).Select(mapper.Map).ToList();
+            return context.Sizes.Select(mapper.Map).ToList();
 
             //List<Domain.Models.Size> sizes = new List<Domain.Models.Size>();
             //context.Sizes.AsEnumerable().GroupBy(s => s.SizeType).Select(s => s.First()).ToList().ForEach(size => sizes.Add(mapper.Map(size)));
@@ -33,7 +33,7 @@ namespace PizzaBox.Storing.Repositories
 
         public void Remove(Domain.Models.Size t)
         {
-            Entities.Size dbSize = mapper.Map(t);
+            Entities.Size dbSize = mapper.Map(t, context);
             Entities.Size size = context.Sizes.ToList().Find(s => s.SizeType == dbSize.SizeType);
             if (size is not null)
             {
@@ -44,11 +44,11 @@ namespace PizzaBox.Storing.Repositories
 
         public void Update(Domain.Models.Size existing, Domain.Models.Size updated)
         {
-            Entities.Size dbSize = mapper.Map(existing);
+            Entities.Size dbSize = mapper.Map(existing, context);
             Entities.Size size = context.Sizes.ToList().Find(s => s.SizeType == dbSize.SizeType);
             if (size is not null)
             {
-                Entities.Size updatedSize = mapper.Map(updated);
+                Entities.Size updatedSize = mapper.Map(updated, context);
                 size.Price = updatedSize.Price;
                 size.SizeType = updatedSize.SizeType;
                 context.SaveChanges();

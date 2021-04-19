@@ -18,7 +18,7 @@ namespace PizzaBox.Storing.Repositories
 
         public void Add(APizza t)
         {
-            context.Pizzas.Add(mapper.Map(t));
+            context.Pizzas.Add(mapper.Map(t, context));
             context.SaveChanges();
         }
 
@@ -33,7 +33,7 @@ namespace PizzaBox.Storing.Repositories
 
         public void Remove(APizza t)
         {
-            Pizza dbPizza = mapper.Map(t);
+            Pizza dbPizza = mapper.Map(t, context);
             Pizza pizza = context.Pizzas.ToList().Find(p => p.GetHashCode() == dbPizza.GetHashCode());
             if (pizza is not null)
             {
@@ -44,11 +44,11 @@ namespace PizzaBox.Storing.Repositories
 
         public void Update(APizza existing, APizza updated)
         {
-            Pizza dbPizza = mapper.Map(existing);
+            Pizza dbPizza = mapper.Map(existing, context);
             Pizza pizza = context.Pizzas.ToList().Find(p => p.GetHashCode() == dbPizza.GetHashCode());
             if (pizza is not null)
             {
-                Pizza updatedPizza = mapper.Map(updated);
+                Pizza updatedPizza = mapper.Map(updated, context);
                 pizza.Crust = updatedPizza.Crust;
                 pizza.Size = updatedPizza.Size;
                 pizza.PizzaType = updatedPizza.PizzaType;

@@ -4,6 +4,7 @@ using PizzaBox.Domain.Models;
 using PizzaBox.Storing.Mappers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PizzaBox.Storing.Mappers
 {
@@ -37,11 +38,13 @@ namespace PizzaBox.Storing.Mappers
             model.Toppings.ForEach(topping => toppings.Add(toppingMapper.Map(topping)));
             pizza.Toppings = toppings;
             //pizza.Price = model.Price;
+            pizza.ID = model.ID;
             return pizza;
         }
 
-        public Pizza Map(APizza model)
+        public Pizza Map(APizza model, Entities.AnimalsDbContext context)
         {
+
             PIZZA_TYPE pizzaType;
             switch (model)
             {
@@ -57,13 +60,18 @@ namespace PizzaBox.Storing.Mappers
                 default:
                     throw new ArgumentException("PizzaMapper encountered unknown type when mapping from Domain Model to DB Model");
             }
+
             Pizza pizza = new Pizza();
             pizza.PizzaType = pizzaType;
-            pizza.Crust = crustMapper.Map(model.Crust);
-            pizza.Size = sizeMapper.Map(model.Size);
-            List<Entities.Topping> toppings = new List<Entities.Topping>();
-            model.Toppings.ForEach(topping => toppings.Add(toppingMapper.Map(topping)));
-            pizza.Toppings = toppings;
+            pizza.Crust = crustMapper.Map(model.Crust, context);
+            pizza.Size = sizeMapper.Map(model.Size, context);
+            foreach (Domain.Models.Topping topping in model.Toppings)
+            {
+                var mappedTopping = toppingMapper.Map(topping, context);
+                mappedTopping.Pizzas.Add(pizza);
+                pizza.Toppings.Add(mappedTopping);
+            }
+            //model.Toppings.ForEach(topping => toppings.Add(toppingMapper.Map(topping, context)));
             pizza.Price = model.Price;
             return pizza;
         }

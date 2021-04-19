@@ -18,13 +18,13 @@ namespace PizzaBox.Storing.Repositories
 
         public void Add(AStore t)
         {
-            context.Add(mapper.Map(t));
+            context.Add(mapper.Map(t, context));
             context.SaveChanges();
         }
 
         public List<AStore> GetList()
         {
-            return context.Stores.AsEnumerable().GroupBy(s => s.Name).Select(s => s.First()).Select(mapper.Map).ToList();
+            return context.Stores.Select(mapper.Map).ToList();
             //List<AStore> AStores = new List<AStore>();
 
             //context.Stores.AsEnumerable().GroupBy(s => s.Name).Select(s => s.First()).ToList().ForEach(store => AStores.Add(mapper.Map(store)));
@@ -48,7 +48,7 @@ namespace PizzaBox.Storing.Repositories
             Store existingInDb = context.Stores.ToList().Find(store => store.Name.Equals(existing.Name));
             if (existingInDb is not null)
             {
-                Store mappedUpdated = mapper.Map(updated);
+                Store mappedUpdated = mapper.Map(updated, context);
                 existingInDb.Name = mappedUpdated.Name;
                 existingInDb.StoreType = mappedUpdated.StoreType;
                 context.SaveChanges();

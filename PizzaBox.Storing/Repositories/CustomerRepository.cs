@@ -19,13 +19,13 @@ namespace PizzaBox.Storing.Repositories
 
         public void Add(Domain.Models.Customer t)
         {
-            context.Customers.Add(mapper.Map(t));
+            context.Customers.Add(mapper.Map(t, context));
             context.SaveChanges();
         }
 
         public List<Domain.Models.Customer> GetList()
         {
-            return context.Customers.AsEnumerable().GroupBy(c => c.Name).Select(c => c.First()).Select(mapper.Map).ToList();
+            return context.Customers.Select(mapper.Map).ToList();
 
             //List<PizzaBox.Domain.Models.Customer> domainCustomers = new List<PizzaBox.Domain.Models.Customer>();
 
