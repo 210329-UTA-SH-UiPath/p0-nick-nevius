@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using PizzaBox.Storing.Entities;
 using System;
+using System.Linq;
 
 namespace PizzaBox.Storing.Mappers
 {
@@ -16,7 +17,7 @@ namespace PizzaBox.Storing.Mappers
             order.Customer = customerMapper.Map(model.Customer);
 
             List<Domain.Abstracts.APizza> apizzas = new List<Domain.Abstracts.APizza>();
-            model.Pizzas.ForEach(p => apizzas.Add(pizzaMapper.Map(p)));
+            model.Pizzas.ToList().ForEach(p => apizzas.Add(pizzaMapper.Map(p)));
             order.Pizzas = apizzas;
 
             order.Price = model.TotalPrice;

@@ -24,7 +24,7 @@ namespace PizzaBox.Storing.Repositories
 
         public List<APizza> GetList()
         {
-            return context.Pizzas.Include(p => p.Crust).Include(p => p.Size).Include(p => p.Toppings).AsEnumerable().GroupBy(p => p.PizzaType).Select(p => p.First()).Select(mapper.Map).ToList();
+            return context.Pizzas.Include(p => p.Crust).Include(p => p.Size).Include(p => p.PizzaToppings).AsEnumerable().GroupBy(p => p.PizzaType).Select(p => p.First()).Select(mapper.Map).ToList();
             //List<APizza> pizzas = new List<APizza>();
             //context.Pizzas.Include(p => p.Crust).Include(p => p.Size).Include(p => p.Toppings).AsEnumerable().GroupBy(p => p.PizzaType).Select(p => p.First()).ToList().ForEach(pizza => pizzas.Add(mapper.Map(pizza)));
             //ontext.Pizzas.Include(p => p.Crust).Include(p => p.Size).Include(p => p.Toppings).ToList().ForEach(pizza => pizzas.Add(mapper.Map(pizza)));
@@ -53,7 +53,7 @@ namespace PizzaBox.Storing.Repositories
                 pizza.Size = updatedPizza.Size;
                 pizza.PizzaType = updatedPizza.PizzaType;
                 pizza.Price = updatedPizza.Price;
-                pizza.Toppings = updatedPizza.Toppings;
+                pizza.PizzaToppings = updatedPizza.PizzaToppings;
                 context.SaveChanges();
             }
         }

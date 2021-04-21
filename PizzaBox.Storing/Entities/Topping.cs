@@ -14,7 +14,8 @@ namespace PizzaBox.Storing.Entities
     {
         public Topping()
         {
-            Pizzas = new List<Pizza>();
+            //Pizzas = new List<Pizza>();
+            PizzaToppings = new List<PizzaTopping>();
         }
 
         [Key]
@@ -23,6 +24,8 @@ namespace PizzaBox.Storing.Entities
         public TOPPING_TYPE ToppingType { get; set; }
         [Required]
         public decimal Price { get; set; }
-        public ICollection<Pizza> Pizzas { get; set; }
+        //public virtual ICollection<Pizza> Pizzas { get; set; }
+
+        public virtual ICollection<PizzaTopping> PizzaToppings { get; set; }
     }
 }

@@ -14,11 +14,11 @@ namespace PizzaBox.Storing.Entities
         [Key]
         public int ID { get; set; }
         [Required]
-        public Store Store { get; set; }
+        public virtual Store Store { get; set; }
         [Required]
-        public Customer Customer { get; set; }
+        public virtual Customer Customer { get; set; }
         [Required]
-        public List<Pizza> Pizzas { get; set; }
+        public virtual ICollection<Pizza> Pizzas { get; set; }
         [Required]
         public decimal TotalPrice { get; set; }
         [Required]

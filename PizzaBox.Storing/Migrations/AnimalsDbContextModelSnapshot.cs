@@ -130,6 +130,31 @@ namespace PizzaBox.Storing.Migrations
                     b.ToTable("Pizzas");
                 });
 
+            modelBuilder.Entity("PizzaBox.Storing.Entities.PizzaTopping", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PizzaID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ToppingID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("PizzaID");
+
+                    b.HasIndex("ToppingID");
+
+                    b.ToTable("PizzaToppings");
+                });
+
             modelBuilder.Entity("PizzaBox.Storing.Entities.Size", b =>
                 {
                     b.Property<int>("ID")
@@ -194,21 +219,6 @@ namespace PizzaBox.Storing.Migrations
                     b.ToTable("Toppings");
                 });
 
-            modelBuilder.Entity("PizzaTopping", b =>
-                {
-                    b.Property<int>("PizzasID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ToppingsID")
-                        .HasColumnType("int");
-
-                    b.HasKey("PizzasID", "ToppingsID");
-
-                    b.HasIndex("ToppingsID");
-
-                    b.ToTable("PizzaTopping");
-                });
-
             modelBuilder.Entity("OrderPizza", b =>
                 {
                     b.HasOne("PizzaBox.Storing.Entities.Order", null)
@@ -254,19 +264,33 @@ namespace PizzaBox.Storing.Migrations
                     b.Navigation("Size");
                 });
 
-            modelBuilder.Entity("PizzaTopping", b =>
+            modelBuilder.Entity("PizzaBox.Storing.Entities.PizzaTopping", b =>
                 {
-                    b.HasOne("PizzaBox.Storing.Entities.Pizza", null)
-                        .WithMany()
-                        .HasForeignKey("PizzasID")
+                    b.HasOne("PizzaBox.Storing.Entities.Pizza", "Pizza")
+                        .WithMany("PizzaToppings")
+                        .HasForeignKey("PizzaID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PizzaBox.Storing.Entities.Topping", null)
-                        .WithMany()
-                        .HasForeignKey("ToppingsID")
+                    b.HasOne("PizzaBox.Storing.Entities.Topping", "Topping")
+                        .WithMany("PizzaToppings")
+                        .HasForeignKey("ToppingID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Pizza");
+
+                    b.Navigation("Topping");
+                });
+
+            modelBuilder.Entity("PizzaBox.Storing.Entities.Pizza", b =>
+                {
+                    b.Navigation("PizzaToppings");
+                });
+
+            modelBuilder.Entity("PizzaBox.Storing.Entities.Topping", b =>
+                {
+                    b.Navigation("PizzaToppings");
                 });
 #pragma warning restore 612, 618
         }

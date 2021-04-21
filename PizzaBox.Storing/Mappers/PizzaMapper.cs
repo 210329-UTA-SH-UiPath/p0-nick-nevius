@@ -35,7 +35,13 @@ namespace PizzaBox.Storing.Mappers
             pizza.Crust = crustMapper.Map(model.Crust);
             pizza.Size = sizeMapper.Map(model.Size);
             List<Domain.Models.Topping> toppings = new List<Domain.Models.Topping>();
-            model.Toppings.ForEach(topping => toppings.Add(toppingMapper.Map(topping)));
+            model.PizzaToppings.ToList().ForEach(pt =>
+            {
+                for (int i = 0; i < pt.Amount; i++)
+                {
+                    toppings.Add(toppingMapper.Map(pt.Topping));
+                }
+            });
             pizza.Toppings = toppings;
             //pizza.Price = model.Price;
             pizza.ID = model.ID;
@@ -65,13 +71,28 @@ namespace PizzaBox.Storing.Mappers
             pizza.PizzaType = pizzaType;
             pizza.Crust = crustMapper.Map(model.Crust, context);
             pizza.Size = sizeMapper.Map(model.Size, context);
-            foreach (Domain.Models.Topping topping in model.Toppings)
+
+            // need to group the PizzaToppings by their topping's toppingtype
+            // need to make AMOUNT = Count of the grouping
+            List<Entities.Topping> mappedToppings = new List<Entities.Topping>();
+            model.Toppings.ForEach(t => mappedToppings.Add(toppingMapper.Map(t, context)));
+            var grouped = mappedToppings.GroupBy(t => t.ToppingType);
+            foreach (var group in mappedToppings.GroupBy(t => t.ToppingType))
             {
-                var mappedTopping = toppingMapper.Map(topping, context);
-                mappedTopping.Pizzas.Add(pizza);
-                pizza.Toppings.Add(mappedTopping);
+                var firstTopping = group.First();
+                if (firstTopping is null)
+                {
+                    // Should never happen
+                    throw new ArgumentException("Everything is on fire. Just rewrite everything please");
+                }
+                PizzaTopping pt = new PizzaTopping();
+                pt.Pizza = pizza;
+                pt.Topping = firstTopping;
+                pt.Amount = group.Count();
+                firstTopping.PizzaToppings.Add(pt);
+                pizza.PizzaToppings.Add(pt);
             }
-            //model.Toppings.ForEach(topping => toppings.Add(toppingMapper.Map(topping, context)));
+
             pizza.Price = model.Price;
             return pizza;
         }

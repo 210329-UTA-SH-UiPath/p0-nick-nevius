@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PizzaBox.Storing.Migrations
 {
-    public partial class initcreate : Migration
+    public partial class created : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -133,24 +133,27 @@ namespace PizzaBox.Storing.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PizzaTopping",
+                name: "PizzaToppings",
                 columns: table => new
                 {
-                    PizzasID = table.Column<int>(type: "int", nullable: false),
-                    ToppingsID = table.Column<int>(type: "int", nullable: false)
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PizzaID = table.Column<int>(type: "int", nullable: false),
+                    ToppingID = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PizzaTopping", x => new { x.PizzasID, x.ToppingsID });
+                    table.PrimaryKey("PK_PizzaToppings", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_PizzaTopping_Pizzas_PizzasID",
-                        column: x => x.PizzasID,
+                        name: "FK_PizzaToppings_Pizzas_PizzaID",
+                        column: x => x.PizzaID,
                         principalTable: "Pizzas",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PizzaTopping_Toppings_ToppingsID",
-                        column: x => x.ToppingsID,
+                        name: "FK_PizzaToppings_Toppings_ToppingID",
+                        column: x => x.ToppingID,
                         principalTable: "Toppings",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -218,9 +221,14 @@ namespace PizzaBox.Storing.Migrations
                 column: "SizeID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PizzaTopping_ToppingsID",
-                table: "PizzaTopping",
-                column: "ToppingsID");
+                name: "IX_PizzaToppings_PizzaID",
+                table: "PizzaToppings",
+                column: "PizzaID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PizzaToppings_ToppingID",
+                table: "PizzaToppings",
+                column: "ToppingID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sizes_SizeType",
@@ -247,7 +255,7 @@ namespace PizzaBox.Storing.Migrations
                 name: "OrderPizza");
 
             migrationBuilder.DropTable(
-                name: "PizzaTopping");
+                name: "PizzaToppings");
 
             migrationBuilder.DropTable(
                 name: "Orders");

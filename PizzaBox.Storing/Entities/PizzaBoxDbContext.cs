@@ -17,6 +17,7 @@ namespace PizzaBox.Storing.Entities
         public DbSet<Size> Sizes { get; set; }
         public DbSet<Store> Stores { get; set; }
         public DbSet<Topping> Toppings { get; set; }
+        public DbSet<PizzaTopping> PizzaToppings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,7 +27,10 @@ namespace PizzaBox.Storing.Entities
             modelBuilder.Entity<Store>().HasIndex(s => s.Name).IsUnique();
             modelBuilder.Entity<Customer>().HasIndex(c => c.Name).IsUnique();
 
-            modelBuilder.Entity<Topping>().HasMany(t => t.Pizzas).WithMany(p => p.Toppings);
+            // modelBuilder.Entity<Topping>().HasMany(t => t.Pizzas).WithMany(p => p.Toppings);
+            modelBuilder.Entity<Topping>().HasMany(t => t.PizzaToppings).WithOne(pt => pt.Topping);
+            modelBuilder.Entity<Pizza>().HasMany(p => p.PizzaToppings).WithOne(pt => pt.Pizza);
+
             modelBuilder.Entity<Order>().HasOne(o => o.Customer);
             modelBuilder.Entity<Order>().HasOne(o => o.Store);
             modelBuilder.Entity<Order>().HasMany(o => o.Pizzas).WithMany(p => p.Orders);
